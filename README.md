@@ -1,5 +1,5 @@
 # Beating_Yesterday
-A motivational program to compete with yesterday's me
+A Motivational Program to Compete with Yesterday's Me
 
 Programming Language : JAVA
 
