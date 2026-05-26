@@ -22,7 +22,7 @@
         app:layout_constraintVertical_bias="0.0"
         app:navGraph="@navigation/mobile_navigation"
         android:layout_weight="1"
-        tools:layout="@layout/fragment_left" />
+        tools:layout="@layout/fragment_diet" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"

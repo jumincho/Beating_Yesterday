@@ -5,7 +5,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <com.example.project1.ui.right.MyTimer
+    <com.jumincho.beatingyesterday.ui.productivity.CircularTimerView
         android:id="@+id/timer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
