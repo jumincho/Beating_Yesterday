@@ -1,0 +1,2 @@
+rootProject.name = "Beating Yesterday"
+include ':app'

@@ -1,0 +1,28 @@
+*.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Gradle
+build/
+.gradle/
+
+# Generated files
+bin/
+gen/
+out/
+release/
+
+# IDE
+*.iws
+*.ipr
+
+# Keystore (do not commit)
+*.jks
+*.keystore
