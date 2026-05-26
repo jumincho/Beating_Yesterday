@@ -6,6 +6,12 @@ public class DietViewModel extends ViewModel {
     static int total = 0;
 
     public static void addTotal(String kcal) {
-        total += Integer.parseInt(kcal);
+        if (kcal == null || kcal.isEmpty()) {
+            return;
+        }
+        try {
+            total += Integer.parseInt(kcal);
+        } catch (NumberFormatException ignored) {
+        }
     }
 }

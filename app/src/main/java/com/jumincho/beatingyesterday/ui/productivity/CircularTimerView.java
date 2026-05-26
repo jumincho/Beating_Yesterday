@@ -619,7 +619,7 @@ public class CircularTimerView extends View {
         initialFinishListener = new OnInitialFinishListener() {
             @Override
             public void onInitialFinishListener() {
-                if (h > 5 || m > 59 || s > 69 || h < 0 || m < 0 | s < 0) {
+                if (h > 5 || m > 59 || s > 59 || h < 0 || m < 0 || s < 0) {
                     throw new NumberFormatException("hour must in [0-5], minute and second must in [0-59]");
                 }
                 timeRemain.set(Calendar.HOUR_OF_DAY, h);

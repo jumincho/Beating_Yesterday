@@ -1,5 +1,6 @@
 package com.jumincho.beatingyesterday.data;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -48,6 +49,34 @@ public class NoteDatabase {
             return false;
         }
         return true;
+    }
+
+    public long insert(String table, String nullColumnHack, ContentValues values) {
+        try {
+            return db.insert(table, nullColumnHack, values);
+        } catch (Exception ex) {
+            Log.e(TAG, "Exception in insert", ex);
+            return -1;
+        }
+    }
+
+    public int delete(String table, String whereClause, String[] whereArgs) {
+        try {
+            return db.delete(table, whereClause, whereArgs);
+        } catch (Exception ex) {
+            Log.e(TAG, "Exception in delete", ex);
+            return 0;
+        }
+    }
+
+    public Cursor rawQuery(String sql, String[] selectionArgs) {
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(sql, selectionArgs);
+        } catch (Exception ex) {
+            Log.e(TAG, "Exception in rawQuery", ex);
+        }
+        return cursor;
     }
 
     private class DatabaseHelper extends SQLiteOpenHelper {

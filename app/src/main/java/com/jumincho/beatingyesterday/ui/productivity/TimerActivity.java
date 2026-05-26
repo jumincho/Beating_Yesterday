@@ -35,7 +35,9 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
         timer = (CircularTimerView) findViewById(R.id.timer);
         timer.setOnTimeChangeListener(this);
         timer.setSecondChangListener(this);
@@ -57,12 +59,12 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
                 SharedPreferences sf = getSharedPreferences("yesterday_interval", MODE_PRIVATE);
                 SharedPreferences.Editor e = sf.edit();
                 e.putLong("interval", interval);
-                e.commit();
+                e.apply();
                 interval = 0;
                 SharedPreferences sf1 = getSharedPreferences("today_interval", MODE_PRIVATE);
                 SharedPreferences.Editor e1 = sf1.edit();
                 e1.putLong("interval", 0);
-                e1.commit();
+                e1.apply();
             }
         };
         rbutton.setOnClickListener(listener);
@@ -103,7 +105,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
                 SharedPreferences sf = getSharedPreferences("today_interval", MODE_PRIVATE);
                 SharedPreferences.Editor e = sf.edit();
                 e.putLong("interval", interval);
-                e.commit();
+                e.apply();
                 break;
 
             case R.id.btn_reset:
@@ -141,7 +143,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
             SharedPreferences sf = getSharedPreferences("today_interval", MODE_PRIVATE);
             SharedPreferences.Editor e = sf.edit();
             e.putLong("interval", interval);
-            e.commit();
+            e.apply();
         }
     }
 

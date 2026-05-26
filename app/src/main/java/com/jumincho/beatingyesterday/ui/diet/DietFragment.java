@@ -45,8 +45,6 @@ public class DietFragment extends Fragment {
         };
         btn1.setOnClickListener(listener);
         btn2.setOnClickListener(listener);
-        MainActivity activity = (MainActivity) getActivity();
-        activity.showFragment(DietInputFragment.newInstance());
         return root;
     }
 }

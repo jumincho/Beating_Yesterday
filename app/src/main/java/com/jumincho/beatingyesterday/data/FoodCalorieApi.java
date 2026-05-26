@@ -1,5 +1,9 @@
 package com.jumincho.beatingyesterday.data;
 
+import android.os.Handler;
+import android.os.Looper;
+
+import com.jumincho.beatingyesterday.BuildConfig;
 import com.jumincho.beatingyesterday.ui.diet.DietInputFragment;
 import com.jumincho.beatingyesterday.ui.diet.DietViewModel;
 
@@ -17,11 +21,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class FoodCalorieApi {
-    private static final String KEY = "0c0a4163cb6e454e88b8";
-    private static final String BASE_URL = "https://openapi.foodsafetykorea.go.kr/api/" + KEY + "/I2790/json/1/5/";
+    // API key is injected at build time from local.properties.
+    // See README "보안 주의사항" for setup instructions.
+    private static final String KEY = BuildConfig.FOOD_API_KEY;
+    private static final String BASE_URL =
+            "https://openapi.foodsafetykorea.go.kr/api/" + KEY + "/I2790/json/1/5/";
 
-    public static void getJson(String foodName) {
-        String url = BASE_URL + "DESC_KOR=" + foodName;
+    private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
+
+    public static void getJson(final String foodName) {
+        final String url = BASE_URL + "DESC_KOR=" + foodName;
         Thread th = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -54,23 +63,37 @@ public class FoodCalorieApi {
                     br.close();
                     con.disconnect();
                     String result = sb.toString().trim();
-                    String kcal = "";
-                    String originText = DietInputFragment.getTextView();
                     JSONObject root = (JSONObject) new JSONTokener(result).nextValue();
                     root = root.getJSONObject("I2790");
                     JSONObject tmp = root.getJSONObject("RESULT");
                     String msg = tmp.getString("MSG");
                     if (!msg.equals("정상처리되었습니다.")) {
-                        DietInputFragment.setTextView(originText);
+                        // No update needed; the original text stays as-is.
                         return;
                     }
                     JSONArray array = new JSONArray(root.getString("row"));
+                    String kcal = "0";
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject obj = array.getJSONObject(i);
-                        kcal = obj.getString("SERVING_SIZE");
+                        // NUTR_CONT1 is calories per serving (kcal) in foodsafetykorea I2790.
+                        kcal = obj.optString("NUTR_CONT1", "0");
                     }
-                    DietViewModel.addTotal(kcal);
-                    DietInputFragment.setTextView(originText + "\n" + "<" + foodName + "> " + kcal + "kcal");
+                    int kcalInt = 0;
+                    try {
+                        kcalInt = (int) Math.round(Double.parseDouble(kcal));
+                    } catch (NumberFormatException nfe) {
+                        kcalInt = 0;
+                    }
+                    DietViewModel.addTotal(String.valueOf(kcalInt));
+                    final String displayKcal = String.valueOf(kcalInt);
+                    MAIN_HANDLER.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            String origin = DietInputFragment.getTextView();
+                            DietInputFragment.setTextView(
+                                    origin + "\n" + "<" + foodName + "> " + displayKcal + "kcal");
+                        }
+                    });
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 } catch (IOException e) {

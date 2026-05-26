@@ -20,13 +20,18 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     private static final String TAG = "NoteAdapter";
 
     ArrayList<Note> items = new ArrayList<>();
+    private final Context context;
+
+    public NoteAdapter(Context context) {
+        this.context = context.getApplicationContext();
+    }
 
     @NonNull
     @Override
     public NoteAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.todo_list_item, parent, false);
-        return new ViewHolder(itemView);
+        return new ViewHolder(itemView, context);
     }
 
     @Override
@@ -46,9 +51,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         LinearLayout layoutTodo;
         CheckBox checkBox;
         Button deleteButton;
+        final Context context;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(View itemView, Context context) {
             super(itemView);
+            this.context = context;
 
             layoutTodo = itemView.findViewById(R.id.layoutTodo);
             checkBox = itemView.findViewById(R.id.checkBox);
@@ -63,12 +70,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
                     Toast.makeText(v.getContext(), "삭제되었습니다.", Toast.LENGTH_SHORT).show();
                 }
 
-                Context context;
-
                 private void deleteToDo(String todo) {
-                    String deleteSql = "delete from " + NoteDatabase.TABLE_NOTE + " where " + "  TODO = '" + todo + "'";
                     NoteDatabase database = NoteDatabase.getInstance(context);
-                    database.execSQL(deleteSql);
+                    database.delete(NoteDatabase.TABLE_NOTE, "TODO = ?", new String[]{todo});
                 }
             });
         }

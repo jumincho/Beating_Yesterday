@@ -2,6 +2,14 @@ plugins {
     id 'com.android.application'
 }
 
+// Load API key from local.properties (not committed). Fallback to empty string.
+def localProps = new Properties()
+def localPropsFile = rootProject.file('local.properties')
+if (localPropsFile.exists()) {
+    localPropsFile.withInputStream { localProps.load(it) }
+}
+def foodApiKey = localProps.getProperty('FOOD_API_KEY', '')
+
 android {
     compileSdk 32
 
@@ -13,6 +21,12 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "FOOD_API_KEY", "\"${foodApiKey}\""
+    }
+
+    buildFeatures {
+        buildConfig true
     }
 
     buildTypes {

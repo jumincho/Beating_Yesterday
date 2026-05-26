@@ -4,7 +4,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import android.content.Context;
+import android.content.ContentValues;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +20,6 @@ public class TodoActivity extends AppCompatActivity {
 
     Fragment todoListFragment;
     EditText inputToDo;
-    Context context;
 
     public static NoteDatabase noteDatabase = null;
 
@@ -29,7 +28,9 @@ public class TodoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
         todoListFragment = new TodoListFragment();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.container, todoListFragment).commit();
@@ -49,11 +50,11 @@ public class TodoActivity extends AppCompatActivity {
         inputToDo = findViewById(R.id.inputTodo);
         String todo = inputToDo.getText().toString();
 
-        String sqlSave = "insert into " + NoteDatabase.TABLE_NOTE + " (TODO) values (" +
-                "'" + todo + "')";
+        ContentValues values = new ContentValues();
+        values.put("TODO", todo);
 
-        NoteDatabase database = NoteDatabase.getInstance(context);
-        database.execSQL(sqlSave);
+        NoteDatabase database = NoteDatabase.getInstance(getApplicationContext());
+        database.insert(NoteDatabase.TABLE_NOTE, null, values);
 
         inputToDo.setText("");
     }

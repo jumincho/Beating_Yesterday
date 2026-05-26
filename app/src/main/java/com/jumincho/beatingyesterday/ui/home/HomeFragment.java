@@ -102,17 +102,17 @@ public class HomeFragment extends Fragment {
                 e2.putLong("interval", sf3.getLong("interval", 0));
                 e1.clear();
                 e3.clear();
-                e.commit();
-                e1.commit();
-                e2.commit();
-                e3.commit();
+                e.apply();
+                e1.apply();
+                e2.apply();
+                e3.apply();
                 SharedPreferences sf4 = getActivity().getSharedPreferences("TextViewData", MODE_PRIVATE);
                 SharedPreferences.Editor e4 = sf4.edit();
                 e4.clear();
                 e4.putString("BreakFast", "아침");
                 e4.putString("Lunch", "점심");
                 e4.putString("Dinner", "저녁");
-                e4.commit();
+                e4.apply();
 
                 Toast.makeText(getActivity(), "오늘의 나와 경쟁을 시작합니다.", Toast.LENGTH_SHORT).show();
             }
@@ -130,11 +130,31 @@ public class HomeFragment extends Fragment {
         EditText weightEdit = (EditText) root.findViewById(R.id.weightEdit);
         HomeViewModel.name = nameEdit.getText().toString();
         HomeViewModel.gender = genderEdit.getText().toString();
-        HomeViewModel.age = Integer.parseInt(ageEdit.getText().toString());
-        HomeViewModel.height = Float.parseFloat((heightEdit.getText().toString()));
-        HomeViewModel.weight = Float.parseFloat((weightEdit.getText().toString()));
-        HomeViewModel.BMI = (HomeViewModel.weight / (HomeViewModel.height / 100) / (HomeViewModel.height / 100));
-        HomeViewModel.BMI = (float) (Math.round(HomeViewModel.BMI * 100) / 100.0);
+        String ageStr = ageEdit.getText().toString().trim();
+        String heightStr = heightEdit.getText().toString().trim();
+        String weightStr = weightEdit.getText().toString().trim();
+        try {
+            if (!ageStr.isEmpty()) {
+                HomeViewModel.age = Integer.parseInt(ageStr);
+            }
+        } catch (NumberFormatException ignored) {
+        }
+        try {
+            if (!heightStr.isEmpty()) {
+                HomeViewModel.height = Float.parseFloat(heightStr);
+            }
+        } catch (NumberFormatException ignored) {
+        }
+        try {
+            if (!weightStr.isEmpty()) {
+                HomeViewModel.weight = Float.parseFloat(weightStr);
+            }
+        } catch (NumberFormatException ignored) {
+        }
+        if (HomeViewModel.height > 0) {
+            HomeViewModel.BMI = (HomeViewModel.weight / (HomeViewModel.height / 100) / (HomeViewModel.height / 100));
+            HomeViewModel.BMI = (float) (Math.round(HomeViewModel.BMI * 100) / 100.0);
+        }
 
         SharedPreferences sf = getActivity().getSharedPreferences("UserData", Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sf.edit();
@@ -143,7 +163,7 @@ public class HomeFragment extends Fragment {
         e.putInt("Age", HomeViewModel.age);
         e.putFloat("Height", HomeViewModel.height);
         e.putFloat("Weight", HomeViewModel.weight);
-        e.commit();
+        e.apply();
     }
 
     public void setData() {

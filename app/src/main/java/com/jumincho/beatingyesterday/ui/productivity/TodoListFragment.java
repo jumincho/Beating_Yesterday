@@ -24,7 +24,6 @@ public class TodoListFragment extends Fragment {
 
     RecyclerView recyclerView;
     NoteAdapter adapter;
-    Context context;
 
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -54,7 +53,7 @@ public class TodoListFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
 
-        adapter = new NoteAdapter();
+        adapter = new NoteAdapter(getContext().getApplicationContext());
         recyclerView.setAdapter(adapter);
     }
 
@@ -62,10 +61,22 @@ public class TodoListFragment extends Fragment {
         String loadSql = "select _id, TODO from " + NoteDatabase.TABLE_NOTE + " order by _id desc";
 
         int recordCount = -1;
-        NoteDatabase database = NoteDatabase.getInstance(context);
+        Context ctx = getContext();
+        if (ctx == null) {
+            return recordCount;
+        }
+        NoteDatabase database = NoteDatabase.getInstance(ctx.getApplicationContext());
 
         if (database != null) {
+            // Ensure the underlying SQLiteDatabase is open before querying.
+            try {
+                database.open();
+            } catch (Exception ignored) {
+            }
             Cursor outCursor = database.rawQuery(loadSql);
+            if (outCursor == null) {
+                return recordCount;
+            }
 
             recordCount = outCursor.getCount();
 

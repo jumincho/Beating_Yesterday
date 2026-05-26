@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,13 +18,16 @@ import com.jumincho.beatingyesterday.R;
 import com.jumincho.beatingyesterday.data.FoodCalorieApi;
 import com.jumincho.beatingyesterday.ui.home.HomeViewModel;
 
+import java.lang.ref.WeakReference;
+
 import static android.content.Context.MODE_PRIVATE;
 
 
 public class DietInputFragment extends Fragment {
     View root;
     Button currentBtn;
-    static TextView tv;
+    // Held weakly to avoid leaking the Activity through this static field.
+    private static WeakReference<TextView> tvRef = new WeakReference<>(null);
 
     public static DietInputFragment newInstance() {
         DietInputFragment frag = new DietInputFragment();
@@ -49,7 +51,6 @@ public class DietInputFragment extends Fragment {
         RadioButton morning = (RadioButton) root.findViewById(R.id.morning);
         RadioButton lunch = (RadioButton) root.findViewById(R.id.lunch);
         RadioButton dinner = (RadioButton) root.findViewById(R.id.dinner);
-        RadioGroup rGroup = (RadioGroup) root.findViewById(R.id.rGroup);
         init();
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
@@ -64,13 +65,15 @@ public class DietInputFragment extends Fragment {
                         Toast.makeText(getActivity(), "아침, 점심, 저녁을 선택해주세요.", Toast.LENGTH_SHORT).show();
                         return;
                     }
+                    TextView selectedTv = null;
                     if (morning.isChecked()) {
-                        tv = (TextView) root.findViewById(R.id.textView);
+                        selectedTv = (TextView) root.findViewById(R.id.textView);
                     } else if (lunch.isChecked()) {
-                        tv = (TextView) root.findViewById(R.id.textView1);
+                        selectedTv = (TextView) root.findViewById(R.id.textView1);
                     } else if (dinner.isChecked()) {
-                        tv = (TextView) root.findViewById(R.id.textView2);
+                        selectedTv = (TextView) root.findViewById(R.id.textView2);
                     }
+                    tvRef = new WeakReference<>(selectedTv);
                     EditText et = (EditText) root.findViewById(R.id.foodNameText);
                     String foodName = et.getText().toString();
                     if (foodName.equals("")) {
@@ -89,7 +92,7 @@ public class DietInputFragment extends Fragment {
                     SharedPreferences sf = getActivity().getSharedPreferences("Today_kcalScore", MODE_PRIVATE);
                     SharedPreferences.Editor e = sf.edit();
                     e.putInt("Kcal", WeightManagementFragment.kcalScore);
-                    e.commit();
+                    e.apply();
                     Toast.makeText(getActivity(), "갱신하였습니다.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -102,10 +105,17 @@ public class DietInputFragment extends Fragment {
     }
 
     public static void setTextView(String s) {
-        tv.setText(s);
+        TextView tv = tvRef.get();
+        if (tv != null) {
+            tv.setText(s);
+        }
     }
 
     public static String getTextView() {
+        TextView tv = tvRef.get();
+        if (tv == null) {
+            return "";
+        }
         return tv.getText().toString();
     }
 
@@ -113,7 +123,7 @@ public class DietInputFragment extends Fragment {
         SharedPreferences sf = getActivity().getSharedPreferences("Kcal", MODE_PRIVATE);
         SharedPreferences.Editor e = sf.edit();
         e.putInt("total", DietViewModel.total);
-        e.commit();
+        e.apply();
     }
 
     public void saveTextView() {
@@ -125,7 +135,7 @@ public class DietInputFragment extends Fragment {
         editor.putString("BreakFast", tv1.getText().toString());
         editor.putString("Lunch", tv2.getText().toString());
         editor.putString("Dinner", tv3.getText().toString());
-        editor.commit();
+        editor.apply();
     }
 
     @Override
@@ -158,7 +168,7 @@ public class DietInputFragment extends Fragment {
         SharedPreferences sf1 = getActivity().getSharedPreferences("Today_kcalScore", MODE_PRIVATE);
         SharedPreferences.Editor e1 = sf1.edit();
         e1.clear();
-        e1.commit();
+        e1.apply();
         saveTextView();
     }
 
@@ -170,8 +180,8 @@ public class DietInputFragment extends Fragment {
         SharedPreferences.Editor e1 = sf1.edit();
         e.putInt("Kcal", WeightManagementFragment.kcalScore);
         e1.clear();
-        e.commit();
-        e1.commit();
+        e.apply();
+        e1.apply();
     }
 
     public void renewal() {

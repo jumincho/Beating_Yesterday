@@ -56,7 +56,7 @@ public class HomeViewModel extends ViewModel {
             bmiLevel = 1;
         } else if (BMI >= 20 && BMI < 25) {
             bmiLevel = 2;
-        } else if (BMI > 25) {
+        } else if (BMI >= 25) {
             bmiLevel = 3;
         }
     }

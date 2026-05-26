@@ -31,7 +31,9 @@ public class ProfileSetupActivity extends AppCompatActivity {
         TextView textView1 = (TextView) findViewById(R.id.textView);
         EditText editText1 = (EditText) findViewById(R.id.editText);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,11 +75,13 @@ public class ProfileSetupActivity extends AppCompatActivity {
                         weight = Float.parseFloat(editText1.getText().toString());
                         Toast.makeText(ProfileSetupActivity.this, "사용자에 대한 기본정보 입력이 끝났습니다!",
                                 Toast.LENGTH_SHORT).show();
+                        questionFlag++;
+                        saveData();
                         MainActivity.refreshData();
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
-                        saveData();
                         finish();
+                        return;
                     }
                 } else {
                     return;
@@ -102,7 +106,6 @@ public class ProfileSetupActivity extends AppCompatActivity {
         editor.putInt("Age", age);
         editor.putFloat("Height", height);
         editor.putFloat("Weight", weight);
-        editor.commit();
-        super.onPause();
+        editor.apply();
     }
 }

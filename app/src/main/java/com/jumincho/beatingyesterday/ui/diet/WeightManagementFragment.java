@@ -54,7 +54,7 @@ public class WeightManagementFragment extends Fragment {
             }
         };
         btn1.setOnClickListener(listener);
-        if (HomeViewModel.gender.equals("남자")) {
+        if ("남자".equals(HomeViewModel.gender)) {
             stdKcal = 2700;
         } else {
             stdKcal = 2000;
@@ -76,7 +76,7 @@ public class WeightManagementFragment extends Fragment {
         SharedPreferences sf = getActivity().getSharedPreferences("Today_kcalScore", MODE_PRIVATE);
         SharedPreferences.Editor e = sf.edit();
         e.putInt("Kcal", kcalScore);
-        e.commit();
+        e.apply();
         tv1.append("오늘의 칼로리 점수는 " + kcalScore + "입니다.");
         return root;
     }

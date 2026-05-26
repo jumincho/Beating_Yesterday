@@ -39,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
         SharedPreferences sf = getSharedPreferences("UserData", MODE_PRIVATE);
         questionFlag = sf.getInt("Flag", 0);
         name = sf.getString("Name", "이름없음");

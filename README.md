@@ -61,7 +61,15 @@ app/src/main/
 
 ## 빌드 방법
 
-Android Studio에서 프로젝트를 열고 `Run`을 실행하면 됩니다.
+1. 식품안전나라 OpenAPI 키를 발급받습니다 (아래 "보안 주의사항" 참고).
+2. 프로젝트 루트에 `local.properties` 파일을 두고 다음 줄을 추가합니다.
+
+   ```properties
+   FOOD_API_KEY=YOUR_KEY_HERE
+   ```
+
+   `local.properties`는 `.gitignore`에 포함되어 있어 커밋되지 않습니다.
+3. Android Studio에서 프로젝트를 열고 `Run`을 실행합니다.
 
 ```bash
 ./gradlew assembleDebug
@@ -71,6 +79,15 @@ Android Studio에서 프로젝트를 열고 `Run`을 실행하면 됩니다.
 - Android Studio Bumblebee 이상
 - JDK 8 이상
 - Android SDK 32
+
+## 보안 주의사항
+
+- 이전 커밋(예: `fae2f77` 등 머지된 history)에 식품안전나라 OpenAPI 키 문자열이
+  소스 코드에 하드코딩되어 있었습니다. 해당 키는 이미 공개 git history에 노출되었으므로
+  **식품안전나라 사이트에서 즉시 키를 재발급**받기를 권장합니다.
+  (재발급 후 기존 키는 사용 불가 상태가 되도록 폐기 처리해야 합니다.)
+- 이후로는 API 키를 `local.properties`에만 보관하며, Gradle `buildConfigField`를 통해
+  `BuildConfig.FOOD_API_KEY` 로 주입합니다. 소스 코드에 직접 키를 적지 마세요.
 
 ## 발표 자료
 
