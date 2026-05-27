@@ -1,4 +1,23 @@
-# Beating Yesterday (어제의 나 이기기)
+<div align="center">
+
+# beating-yesterday
+
+**어제의 나와 경쟁하며 자기 성장을 동기부여하는 Android 앱**
+**Android app that gamifies daily self-improvement against yesterday's record**
+
+![Platform](https://img.shields.io/badge/platform-Android-3DDC84?logo=android&logoColor=white)
+![Language](https://img.shields.io/badge/language-Java-007396?logo=java&logoColor=white)
+![Min SDK](https://img.shields.io/badge/minSdk-21-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Year](https://img.shields.io/badge/year-2021-blue)
+
+**한국어** · [English](#english)
+
+</div>
+
+---
+
+## 개요
 
 > 어제의 나와 매일 경쟁하며 자기 성장을 동기부여하는 Android 앱
 
@@ -59,17 +78,26 @@ app/src/main/
     └── ...
 ```
 
+## 시크릿 처리
+
+빌드 시스템은 `local.properties` 에서 식품안전나라 OpenAPI 키를 읽어 Gradle
+`buildConfigField` 를 통해 `BuildConfig.FOOD_API_KEY` 로 주입합니다. 키 문자열은
+소스에 포함되지 않으며, `local.properties` 는 `.gitignore` 에 포함되어 있습니다.
+
+| `local.properties` 키 | `BuildConfig` 필드 | 사용처 |
+| --- | --- | --- |
+| `FOOD_API_KEY` | `BuildConfig.FOOD_API_KEY` | 식품안전나라 칼로리 조회 |
+
 ## 빌드 방법
 
-1. 식품안전나라 OpenAPI 키를 발급받습니다 (아래 "보안 주의사항" 참고).
-2. 프로젝트 루트에 `local.properties` 파일을 두고 다음 줄을 추가합니다.
+1. [식품안전나라 OpenAPI](https://various.foodsafetykorea.go.kr/nutrient/) 에서 API 키 발급
+2. 프로젝트 루트의 `local.properties` 에 다음 줄 추가
 
    ```properties
-   FOOD_API_KEY=YOUR_KEY_HERE
+   FOOD_API_KEY=발급받은_키
    ```
 
-   `local.properties`는 `.gitignore`에 포함되어 있어 커밋되지 않습니다.
-3. Android Studio에서 프로젝트를 열고 `Run`을 실행합니다.
+3. Android Studio 에서 프로젝트 열기 → `Run`
 
 ```bash
 ./gradlew assembleDebug
@@ -80,15 +108,6 @@ app/src/main/
 - JDK 8 이상
 - Android SDK 32
 
-## 보안 주의사항
-
-- 이전 커밋(예: `fae2f77` 등 머지된 history)에 식품안전나라 OpenAPI 키 문자열이
-  소스 코드에 하드코딩되어 있었습니다. 해당 키는 이미 공개 git history에 노출되었으므로
-  **식품안전나라 사이트에서 즉시 키를 재발급**받기를 권장합니다.
-  (재발급 후 기존 키는 사용 불가 상태가 되도록 폐기 처리해야 합니다.)
-- 이후로는 API 키를 `local.properties`에만 보관하며, Gradle `buildConfigField`를 통해
-  `BuildConfig.FOOD_API_KEY` 로 주입합니다. 소스 코드에 직접 키를 적지 마세요.
-
 ## 발표 자료
 
 - 발표 영상: <https://youtu.be/vW4CvgCHdco>
@@ -97,3 +116,109 @@ app/src/main/
 ## 스크린샷
 
 <img width="20%" src="https://user-images.githubusercontent.com/77545063/200374902-2da72615-5cf8-4d20-b950-f00962a1c795.png" alt="앱 스크린샷"/>
+
+## 라이선스
+
+[MIT License](./LICENSE)
+
+---
+
+<a name="english"></a>
+
+## English
+
+> Android app that gamifies daily self-improvement against yesterday's record.
+
+Logs daily calorie intake and study time, then judges today's record against yesterday's.
+Calorie scoring is BMI-aware, so this is less a diet tracker than a personalized
+self-management tool that frames each day as a contest with yesterday's you.
+
+### Features
+
+- **User profile** — name, sex, age, height, weight → auto-computed BMI.
+- **Diet** — log breakfast / lunch / dinner; the Korean Food Safety OpenAPI returns calories, and a BMI-bracket-aware (under / normal / over) calorie score is computed.
+- **Study timer** — circular timer with drag-to-set hours / minutes / seconds, plus a stopwatch.
+- **TODO** — SQLite-backed list with swipe-to-refresh.
+- **Daily contest** — yesterday's calorie score + study time vs today's, reported as "did you beat yesterday?"
+
+### Screens
+
+Bottom navigation with three tabs:
+
+| Tab | Description |
+| --- | --- |
+| Diet | Food entry · weight management |
+| Home | Profile · daily yesterday-vs-today contest |
+| Productivity | TODO · study timer |
+
+### Tech stack
+
+- **Language**: Java
+- **Platform**: Android (minSdk 21 / targetSdk 32)
+- **Architecture**: Fragment + ViewModel
+- **Storage**: SharedPreferences (profile, daily records) + SQLite (TODO)
+- **Network**: HttpURLConnection + Korean Food Safety OpenAPI
+- **UI**: Material Components, ConstraintLayout, RecyclerView, Navigation Component
+
+### Layout
+
+```
+app/src/main/
+├── java/com/jumincho/beatingyesterday/
+│   ├── MainActivity.java
+│   ├── data/                          # data layer
+│   │   ├── FoodCalorieApi.java        # Food Safety API client
+│   │   ├── Note.java                  # TODO model
+│   │   ├── NoteAdapter.java
+│   │   └── NoteDatabase.java          # SQLite helper
+│   └── ui/
+│       ├── ProfileSetupActivity.java  # first-launch profile entry
+│       ├── home/                      # home (contest result)
+│       ├── diet/                      # diet / weight management
+│       └── productivity/              # TODO + timer
+│           ├── CircularTimerView.java # custom circular timer view
+│           └── TimerMode.java
+└── res/
+    ├── layout/        # screen layouts
+    ├── navigation/    # bottom-tab navigation graph
+    └── ...
+```
+
+### Secrets handling
+
+The build system reads the Food Safety OpenAPI key from `local.properties` and
+injects it via Gradle `buildConfigField` as `BuildConfig.FOOD_API_KEY`. No
+secrets are present in source. `local.properties` is gitignored.
+
+| `local.properties` key | `BuildConfig` field | Use site |
+| --- | --- | --- |
+| `FOOD_API_KEY` | `BuildConfig.FOOD_API_KEY` | Food Safety calorie lookup |
+
+### Build
+
+1. Get an API key from the [Korean Food Safety OpenAPI](https://various.foodsafetykorea.go.kr/nutrient/).
+2. Add a `local.properties` entry at the repo root:
+
+   ```properties
+   FOOD_API_KEY=your_key_here
+   ```
+
+3. Open the project in Android Studio → `Run`.
+
+```bash
+./gradlew assembleDebug
+```
+
+Requirements:
+- Android Studio Bumblebee+
+- JDK 8+
+- Android SDK 32
+
+### Materials
+
+- Demo video: <https://youtu.be/vW4CvgCHdco>
+- Slides: [`docs/presentation.pptx`](docs/presentation.pptx)
+
+### License
+
+[MIT License](./LICENSE)
