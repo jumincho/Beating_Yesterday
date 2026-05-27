@@ -1,0 +1,50 @@
+name: Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  structure-and-secrets:
+    name: Structure & Secrets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Required files
+        run: |
+          for f in README.md LICENSE app/build.gradle build.gradle settings.gradle gradle.properties; do
+            if [ ! -f "$f" ]; then
+              echo "::error::Missing required file: $f"
+              exit 1
+            fi
+          done
+
+      - name: No committed API keys (Food Safety OpenAPI uses base64-like service keys)
+        run: |
+          # Sanity check: no hardcoded service keys in source
+          if grep -rEn 'FOOD_API_KEY[[:space:]]*=[[:space:]]*"[A-Za-z0-9+/=]{20,}"' app/src/ 2>/dev/null; then
+            echo "::error::Hardcoded Food Safety API key in source"
+            exit 1
+          fi
+
+      - name: .gitignore covers known secret paths
+        run: |
+          if ! grep -Fq "local.properties" .gitignore; then
+            echo "::warning::local.properties should be in .gitignore"
+          fi
+
+      - name: README links resolve
+        run: |
+          missing=0
+          for link in $(grep -oE '\]\(\./[^)]+\)' README.md | sed 's|](\./||; s|)$||' | sort -u); do
+            if [ ! -e "$link" ]; then
+              echo "::warning::README links to missing path: $link"
+              missing=$((missing+1))
+            fi
+          done
+          if [ "$missing" -gt 0 ]; then
+            echo "::warning::$missing README link(s) point to non-existent paths"
+          fi
