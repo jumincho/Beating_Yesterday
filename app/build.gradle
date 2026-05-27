@@ -2,13 +2,23 @@ plugins {
     id 'com.android.application'
 }
 
-// Load API key from local.properties (not committed). Fallback to empty string.
+// Load API key from local.properties (not committed). If neither the
+// file nor the system env exports the key, fail the build with a clear
+// message — silently building with an empty key only fails later at
+// runtime when the API call returns 401.
 def localProps = new Properties()
 def localPropsFile = rootProject.file('local.properties')
 if (localPropsFile.exists()) {
     localPropsFile.withInputStream { localProps.load(it) }
 }
-def foodApiKey = localProps.getProperty('FOOD_API_KEY', '')
+def foodApiKey = localProps.getProperty('FOOD_API_KEY', System.getenv('FOOD_API_KEY') ?: '')
+if (!foodApiKey?.trim()) {
+    throw new GradleException(
+        "FOOD_API_KEY is not set. Add it to local.properties as " +
+        "FOOD_API_KEY=<your_key> or export it as an environment variable " +
+        "before building. See README's 빌드 방법 / Build section."
+    )
+}
 
 android {
     compileSdk 32
