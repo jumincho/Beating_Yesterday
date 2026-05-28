@@ -60,7 +60,7 @@ app/src/main/
 ├── java/com/jumincho/beatingyesterday/
 │   ├── MainActivity.java
 │   ├── data/                          # 数据层
-│   │   ├── FoodCalorieApi.java        # 食品安全 OpenAPI 客户端
+│   │   ├── FoodCalorieApi.java        # 식품안전나라 OpenAPI 客户端
 │   │   ├── Note.java                  # TODO 模型
 │   │   ├── NoteAdapter.java
 │   │   └── NoteDatabase.java          # SQLite 辅助
@@ -85,11 +85,11 @@ app/src/main/
 
 | `local.properties` 键 | `BuildConfig` 字段 | 使用位置 |
 | --- | --- | --- |
-| `FOOD_API_KEY` | `BuildConfig.FOOD_API_KEY` | 食品安全国 (Food Safety Korea) 热量查询 |
+| `FOOD_API_KEY` | `BuildConfig.FOOD_API_KEY` | 韩国 식품안전나라 (Food Safety Korea) 热量查询 |
 
 ## 构建方法
 
-1. 从 [食品安全国 OpenAPI](https://various.foodsafetykorea.go.kr/nutrient/) 申请 API 密钥
+1. 从 [韩国 식품안전나라 OpenAPI](https://various.foodsafetykorea.go.kr/nutrient/) 申请 API 密钥
 2. 在项目根目录的 `local.properties` 中添加:
 
    ```properties
