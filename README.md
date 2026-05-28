@@ -11,7 +11,7 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Year](https://img.shields.io/badge/year-2021-blue)
 
-**한국어** · [English](#english)
+**한국어** · [English](#english) · [中文](./README.zh-CN.md)
 
 </div>
 
@@ -29,7 +29,7 @@
 
 - **사용자 프로필** — 이름, 성별, 나이, 키, 몸무게 입력 후 BMI 자동 계산
 - **식단 관리** — 아침/점심/저녁 음식을 등록하면 식품안전나라 OpenAPI를 통해
-  칼로리를 자동 조회하고, BMI 구간(저체중/정상/과체중)에 따른 칼로리 점수를 산정
+  칼로리를 자동으로 조회하고, BMI 구간(저체중/정상/과체중)에 따른 칼로리 점수를 산정
 - **공부 타이머** — 시/분/초를 드래그로 설정하는 원형 타이머와 스톱워치 기능
 - **할 일 관리** — SQLite 기반 TODO 리스트 (Swipe-to-refresh 지원)
 - **승부 판정** — 어제의 칼로리 점수 + 학습 시간 vs 오늘의 기록을 비교해
