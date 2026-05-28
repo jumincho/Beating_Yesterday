@@ -453,13 +453,6 @@ public class CircularTimerView extends View {
         }
     }
 
-    // TODO(modernize): the Timer + TimerTask + Handler combo here predates
-    // androidx.lifecycle; on a modern Android target this would be a
-    // CountDownTimer or a lifecycle-scoped coroutine flow that emits ticks
-    // to a StateFlow the View collects from. Deferred to a follow-up PR —
-    // changing the threading model would also touch TimerActivity, the
-    // listener interfaces below, and the build script's Kotlin / coroutine
-    // dependencies. Keeping the legacy pattern intact for now.
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
