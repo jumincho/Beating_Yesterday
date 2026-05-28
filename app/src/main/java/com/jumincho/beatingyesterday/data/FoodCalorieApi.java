@@ -24,8 +24,28 @@ public class FoodCalorieApi {
     // API key is injected at build time from local.properties.
     // See README "보안 주의사항" for setup instructions.
     private static final String KEY = BuildConfig.FOOD_API_KEY;
+
+    // Food Safety Korea OpenAPI endpoint fragments. The service id (I2790)
+    // is the nutrient lookup, json is the response format, and 1/5 is the
+    // start-row / end-row paging window (max 5 results per call).
+    private static final String API_HOST = "https://openapi.foodsafetykorea.go.kr/api/";
+    private static final String SERVICE_ID = "I2790";
+    private static final String RESPONSE_FORMAT = "json";
+    private static final String PAGE_RANGE = "1/5";
     private static final String BASE_URL =
-            "https://openapi.foodsafetykorea.go.kr/api/" + KEY + "/I2790/json/1/5/";
+            API_HOST + KEY + "/" + SERVICE_ID + "/" + RESPONSE_FORMAT + "/" + PAGE_RANGE + "/";
+
+    // Connection/read timeouts for the upstream call (milliseconds).
+    private static final int CONNECT_TIMEOUT_MS = 10_000;
+    private static final int READ_TIMEOUT_MS = 10_000;
+
+    // Success message returned by Food Safety Korea when the call is well-formed.
+    // The API does not return a numeric success code in the body, only this
+    // localized string under RESULT.MSG.
+    private static final String API_SUCCESS_MSG = "정상처리되었습니다.";
+
+    // I2790 column name for "calories per serving (kcal)".
+    private static final String FIELD_KCAL = "NUTR_CONT1";
 
     private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
@@ -38,8 +58,8 @@ public class FoodCalorieApi {
                     URL u = new URL(url);
                     HttpURLConnection con = (HttpURLConnection) u.openConnection();
 
-                    con.setReadTimeout(10000);
-                    con.setConnectTimeout(10000);
+                    con.setReadTimeout(READ_TIMEOUT_MS);
+                    con.setConnectTimeout(CONNECT_TIMEOUT_MS);
                     con.setDoOutput(true);
                     con.setDoInput(true);
                     con.setRequestMethod("GET");
@@ -64,10 +84,10 @@ public class FoodCalorieApi {
                     con.disconnect();
                     String result = sb.toString().trim();
                     JSONObject root = (JSONObject) new JSONTokener(result).nextValue();
-                    root = root.getJSONObject("I2790");
+                    root = root.getJSONObject(SERVICE_ID);
                     JSONObject tmp = root.getJSONObject("RESULT");
-                    String msg = tmp.getString("MSG");
-                    if (!msg.equals("정상처리되었습니다.")) {
+                    String msg = tmp.optString("MSG", "");
+                    if (!API_SUCCESS_MSG.equals(msg)) {
                         // No update needed; the original text stays as-is.
                         return;
                     }
@@ -75,8 +95,7 @@ public class FoodCalorieApi {
                     String kcal = "0";
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject obj = array.getJSONObject(i);
-                        // NUTR_CONT1 is calories per serving (kcal) in foodsafetykorea I2790.
-                        kcal = obj.optString("NUTR_CONT1", "0");
+                        kcal = obj.optString(FIELD_KCAL, "0");
                     }
                     int kcalInt = 0;
                     try {

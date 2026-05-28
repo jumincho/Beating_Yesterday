@@ -76,6 +76,25 @@ public class CircularTimerView extends View {
     private static final int DEFAULT_VIEW_WIDTH = 720;
     private static final int DEFAULT_VIEW_HEIGHT = 720;
 
+    // Handler message codes. The "1/2" pair drives countdown (Timer mode),
+    // the "11/12" pair drives count-up (StopWatch mode). Named here so the
+    // switch in handleMessage(...) below isn't a wall of integer literals.
+    private static final int MSG_TIMER_TICK = 1;
+    private static final int MSG_TIMER_DONE = 2;
+    private static final int MSG_STOPWATCH_TICK = 11;
+    private static final int MSG_STOPWATCH_DONE = 12;
+
+    // Per-tick increment for both modes; matches the 100ms Timer.schedule period.
+    private static final int TICK_INTERVAL_MS = 100;
+    private static final long TIMER_INITIAL_DELAY_MS = 1000L;
+
+    // Hour-clock domain is [0..5] in this view (not the standard 24h) — see
+    // setStartTime() Javadoc. updateDegree() uses 6.0 because the hour ring
+    // displays a 0–5 range mapped to a full 360°.
+    private static final int MAX_HOUR = 5;
+    private static final int MAX_MINUTE = 59;
+    private static final int MAX_SECOND = 59;
+
     private OnTimeChangeListener timeChangeListener;
     private OnMinChangListener minChangListener;
     private OnHourChangListener hourChangListener;
@@ -440,25 +459,25 @@ public class CircularTimerView extends View {
             super.handleMessage(msg);
 
             switch (msg.what) {
-                case 1:
-                    timeRemain.add(Calendar.MILLISECOND, -100);
+                case MSG_TIMER_TICK:
+                    timeRemain.add(Calendar.MILLISECOND, -TICK_INTERVAL_MS);
                     if (timeChangeListener != null) {
                         timeChangeListener.onTimeChange(timeStart.getTimeInMillis(), timeRemain.getTimeInMillis());
                     }
                     invalidate();
                     break;
-                case 2:
+                case MSG_TIMER_DONE:
                     isStarted = false;
                     timerTask.cancel();
                     break;
-                case 11:
-                    timeRemain.add(Calendar.MILLISECOND, 100);
+                case MSG_STOPWATCH_TICK:
+                    timeRemain.add(Calendar.MILLISECOND, TICK_INTERVAL_MS);
                     if (timeChangeListener != null) {
                         timeChangeListener.onTimeChange(timeStart.getTimeInMillis(), timeRemain.getTimeInMillis());
                     }
                     invalidate();
                     break;
-                case 12:
+                case MSG_STOPWATCH_DONE:
                     isStarted = false;
                     timerTask.cancel();
                     break;
@@ -477,17 +496,17 @@ public class CircularTimerView extends View {
                     public void run() {
                         if (!isTimeEmpty()) {
                             Message message = new Message();
-                            message.what = 1;
+                            message.what = MSG_TIMER_TICK;
                             mHandler.sendMessage(message);
                         } else {
                             Message message = new Message();
-                            message.what = 2;
+                            message.what = MSG_TIMER_DONE;
                             mHandler.sendMessage(message);
                         }
                     }
                 };
 
-                timer.schedule(timerTask, 1000, 100);
+                timer.schedule(timerTask, TIMER_INITIAL_DELAY_MS, TICK_INTERVAL_MS);
                 isStarted = true;
 
                 if (timeChangeListener != null) {
@@ -501,17 +520,17 @@ public class CircularTimerView extends View {
                     public void run() {
                         if (!isMaxTime()) {
                             Message message = new Message();
-                            message.what = 11;
+                            message.what = MSG_STOPWATCH_TICK;
                             mHandler.sendMessage(message);
                         } else {
                             Message message = new Message();
-                            message.what = 12;
+                            message.what = MSG_STOPWATCH_DONE;
                             mHandler.sendMessage(message);
                         }
                     }
                 };
 
-                timer.schedule(timerTask, 1000, 100);
+                timer.schedule(timerTask, TIMER_INITIAL_DELAY_MS, TICK_INTERVAL_MS);
                 isStarted = true;
 
                 if (timeChangeListener != null) {
@@ -577,9 +596,9 @@ public class CircularTimerView extends View {
     }
 
     public boolean isMaxTime() {
-        return timeRemain.get(Calendar.HOUR_OF_DAY) == 5
-                && timeRemain.get(Calendar.MINUTE) == 59
-                && timeRemain.get(Calendar.SECOND) == 59;
+        return timeRemain.get(Calendar.HOUR_OF_DAY) == MAX_HOUR
+                && timeRemain.get(Calendar.MINUTE) == MAX_MINUTE
+                && timeRemain.get(Calendar.SECOND) == MAX_SECOND;
     }
 
     public interface OnTimeChangeListener {
@@ -619,7 +638,7 @@ public class CircularTimerView extends View {
         initialFinishListener = new OnInitialFinishListener() {
             @Override
             public void onInitialFinishListener() {
-                if (h > 5 || m > 59 || s > 59 || h < 0 || m < 0 || s < 0) {
+                if (h > MAX_HOUR || m > MAX_MINUTE || s > MAX_SECOND || h < 0 || m < 0 || s < 0) {
                     throw new NumberFormatException("hour must in [0-5], minute and second must in [0-59]");
                 }
                 timeRemain.set(Calendar.HOUR_OF_DAY, h);

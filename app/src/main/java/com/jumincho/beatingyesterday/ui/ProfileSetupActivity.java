@@ -16,6 +16,27 @@ import com.jumincho.beatingyesterday.MainActivity;
 import com.jumincho.beatingyesterday.R;
 
 public class ProfileSetupActivity extends AppCompatActivity {
+
+    // Sequential profile-setup questions. The Activity walks the user
+    // through these in order, incrementing questionFlag on each Submit
+    // until QUESTION_DONE (5), at which point the data is saved and the
+    // user is routed to MainActivity.
+    private static final int QUESTION_NAME = 0;
+    private static final int QUESTION_GENDER = 1;
+    private static final int QUESTION_AGE = 2;
+    private static final int QUESTION_HEIGHT = 3;
+    private static final int QUESTION_WEIGHT = 4;
+    private static final int QUESTION_DONE = 5;
+
+    // SharedPreferences container shared with MainActivity / HomeFragment.
+    private static final String PREFS_USER_DATA = "UserData";
+    private static final String KEY_FLAG = "Flag";
+    private static final String KEY_NAME = "Name";
+    private static final String KEY_GENDER = "Gender";
+    private static final String KEY_AGE = "Age";
+    private static final String KEY_HEIGHT = "Height";
+    private static final String KEY_WEIGHT = "Weight";
+
     public static int questionFlag = 0;
     public static String name;
     public static String gender;
@@ -37,10 +58,10 @@ public class ProfileSetupActivity extends AppCompatActivity {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (questionFlag == 0) {
+                if (questionFlag == QUESTION_NAME) {
                     name = editText1.getText().toString();
                     textView1.setText("당신의 성별은 무엇인가요? 남자 : M / 여자 : W");
-                } else if (questionFlag == 1) {
+                } else if (questionFlag == QUESTION_GENDER) {
                     String input = editText1.getText().toString();
                     if (input.equalsIgnoreCase("M")) {
                         gender = "남자";
@@ -54,7 +75,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                         return;
                     }
-                } else if (questionFlag == 2) {
+                } else if (questionFlag == QUESTION_AGE) {
                     if (isNumeric(editText1.getText().toString())) {
                         age = Integer.parseInt(editText1.getText().toString());
                         textView1.setText("당신의 키는 몇 cm인가요?");
@@ -62,7 +83,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
                         Toast.makeText(ProfileSetupActivity.this, "숫자만 입력해주세요", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                } else if (questionFlag == 3) {
+                } else if (questionFlag == QUESTION_HEIGHT) {
                     if (isNumeric(editText1.getText().toString())) {
                         height = Float.parseFloat(editText1.getText().toString());
                         textView1.setText("당신의 몸무게는 몇 kg인가요?");
@@ -70,7 +91,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
                         Toast.makeText(ProfileSetupActivity.this, "숫자만 입력해주세요", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                } else if (questionFlag == 4) {
+                } else if (questionFlag == QUESTION_WEIGHT) {
                     if (isNumeric(editText1.getText().toString())) {
                         weight = Float.parseFloat(editText1.getText().toString());
                         Toast.makeText(ProfileSetupActivity.this, "사용자에 대한 기본정보 입력이 끝났습니다!",
@@ -98,14 +119,14 @@ public class ProfileSetupActivity extends AppCompatActivity {
     }
 
     public void saveData() {
-        SharedPreferences sharedPreferences = getSharedPreferences("UserData", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_USER_DATA, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("Flag", questionFlag);
-        editor.putString("Name", name);
-        editor.putString("Gender", gender);
-        editor.putInt("Age", age);
-        editor.putFloat("Height", height);
-        editor.putFloat("Weight", weight);
+        editor.putInt(KEY_FLAG, questionFlag);
+        editor.putString(KEY_NAME, name);
+        editor.putString(KEY_GENDER, gender);
+        editor.putInt(KEY_AGE, age);
+        editor.putFloat(KEY_HEIGHT, height);
+        editor.putFloat(KEY_WEIGHT, weight);
         editor.apply();
     }
 }

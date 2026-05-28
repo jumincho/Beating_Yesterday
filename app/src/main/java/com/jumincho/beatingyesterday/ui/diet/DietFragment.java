@@ -35,6 +35,9 @@ public class DietFragment extends Fragment {
             public void onClick(View v) {
                 currentBtn = (Button) v;
                 MainActivity activity = (MainActivity) getActivity();
+                if (activity == null) {
+                    return;
+                }
                 String buttonName = currentBtn.getText().toString();
                 if (buttonName.equals("식단관리")) {
                     activity.showFragment(DietInputFragment.newInstance());
