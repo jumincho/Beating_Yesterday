@@ -11,6 +11,17 @@ import com.jumincho.beatingyesterday.R;
 
 public class HomeViewModel extends ViewModel {
 
+    // BMI bucket thresholds. The Korean health-service guideline used for the
+    // original 2021 app treats BMI < 20 as underweight, 20–25 as normal, and
+    // >= 25 as overweight; WeightManagementFragment dispatches on the level
+    // codes below.
+    public static final float BMI_NORMAL_LOWER = 20f;
+    public static final float BMI_NORMAL_UPPER = 25f;
+
+    public static final int BMI_LEVEL_UNDERWEIGHT = 1;
+    public static final int BMI_LEVEL_NORMAL = 2;
+    public static final int BMI_LEVEL_OVERWEIGHT = 3;
+
     private static int questionFlag;
     public static String name;
     public static String gender;
@@ -52,12 +63,12 @@ public class HomeViewModel extends ViewModel {
     }
 
     public void setBmiLevel() {
-        if (BMI < 20) {
-            bmiLevel = 1;
-        } else if (BMI >= 20 && BMI < 25) {
-            bmiLevel = 2;
-        } else if (BMI >= 25) {
-            bmiLevel = 3;
+        if (BMI < BMI_NORMAL_LOWER) {
+            bmiLevel = BMI_LEVEL_UNDERWEIGHT;
+        } else if (BMI < BMI_NORMAL_UPPER) {
+            bmiLevel = BMI_LEVEL_NORMAL;
+        } else {
+            bmiLevel = BMI_LEVEL_OVERWEIGHT;
         }
     }
 }
