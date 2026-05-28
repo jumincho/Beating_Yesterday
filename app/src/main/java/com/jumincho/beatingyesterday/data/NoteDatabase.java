@@ -11,9 +11,9 @@ public class NoteDatabase {
     private static final String TAG = "NoteDatabase";
 
     private static NoteDatabase database;
-    public static String DATABASE_NAME = "todo.db";
-    public static String TABLE_NOTE = "NOTE";
-    public static int DATABASE_VERSION = 1;
+    public static final String DATABASE_NAME = "todo.db";
+    public static final String TABLE_NOTE = "NOTE";
+    public static final int DATABASE_VERSION = 1;
 
     private Context context;
     private SQLiteDatabase db;
