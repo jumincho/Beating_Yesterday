@@ -18,6 +18,14 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class WeightManagementFragment extends Fragment {
 
+    // Daily reference calorie totals used when scoring the day. Sourced from
+    // the 2020 Korean Dietary Reference Intake (KDRI) energy requirements
+    // rounded for the original 2021 build — these are *not* a medical
+    // recommendation, just the baseline the scoring formula compares against.
+    private static final int STD_KCAL_MALE = 2700;
+    private static final int STD_KCAL_FEMALE = 2000;
+    private static final String GENDER_MALE = "남자";
+
     static int stdKcal;
     static int kcalScore;
     Button currentBtn;
@@ -45,6 +53,9 @@ public class WeightManagementFragment extends Fragment {
             public void onClick(View v) {
                 currentBtn = (Button) v;
                 MainActivity activity = (MainActivity) getActivity();
+                if (activity == null) {
+                    return;
+                }
                 String buttonName = currentBtn.getText().toString();
                 if (buttonName.equals("식단 입력")) {
                     activity.showFragment(DietInputFragment.newInstance());
@@ -54,16 +65,16 @@ public class WeightManagementFragment extends Fragment {
             }
         };
         btn1.setOnClickListener(listener);
-        if ("남자".equals(HomeViewModel.gender)) {
-            stdKcal = 2700;
+        if (GENDER_MALE.equals(HomeViewModel.gender)) {
+            stdKcal = STD_KCAL_MALE;
         } else {
-            stdKcal = 2000;
+            stdKcal = STD_KCAL_FEMALE;
         }
 
-        if (HomeViewModel.bmiLevel == 1) {
+        if (HomeViewModel.bmiLevel == HomeViewModel.BMI_LEVEL_UNDERWEIGHT) {
             tv1.setText("당신의 체중은 저체중입니다.\n");
             kcalScore = DietViewModel.total - stdKcal;
-        } else if (HomeViewModel.bmiLevel == 2) {
+        } else if (HomeViewModel.bmiLevel == HomeViewModel.BMI_LEVEL_NORMAL) {
             tv1.setText("당신의 체중은 정상체중입니다.\n");
             kcalScore = stdKcal - DietViewModel.total;
             if (kcalScore >= 0) {
@@ -73,10 +84,12 @@ public class WeightManagementFragment extends Fragment {
             tv1.setText("당신의 체중은 과체중입니다.\n");
             kcalScore = stdKcal - DietViewModel.total;
         }
-        SharedPreferences sf = getActivity().getSharedPreferences("Today_kcalScore", MODE_PRIVATE);
-        SharedPreferences.Editor e = sf.edit();
-        e.putInt("Kcal", kcalScore);
-        e.apply();
+        if (getActivity() != null) {
+            SharedPreferences sf = getActivity().getSharedPreferences("Today_kcalScore", MODE_PRIVATE);
+            SharedPreferences.Editor e = sf.edit();
+            e.putInt("Kcal", kcalScore);
+            e.apply();
+        }
         tv1.append("오늘의 칼로리 점수는 " + kcalScore + "입니다.");
         return root;
     }
