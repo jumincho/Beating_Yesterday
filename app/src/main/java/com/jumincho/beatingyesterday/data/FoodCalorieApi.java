@@ -20,12 +20,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-// TODO(modernize): the raw HttpURLConnection + JSONObject parsing inside a
-// fire-and-forget Thread is what this class did in 2021. The standard
-// replacement today would be Retrofit + Gson (or kotlinx.serialization) with
-// a typed response model, plus structured threading (Coroutines / RxJava /
-// ExecutorService). Deferred to a follow-up PR — pulling in those deps and
-// rewriting the call sites is out of scope for the file-level cleanup.
 public class FoodCalorieApi {
     // API key is injected at build time from local.properties.
     // See README "보안 주의사항" for setup instructions.
