@@ -29,12 +29,15 @@ public class ProductivityFragment extends Fragment {
             public void onClick(View v) {
                 currentBtn = (Button) v;
                 MainActivity activity = (MainActivity) getActivity();
+                if (activity == null) {
+                    return;
+                }
                 String buttonName = currentBtn.getText().toString();
                 if (buttonName.equals("TODO LIST")) {
-                    Intent intent = new Intent(getActivity().getApplicationContext(), TodoActivity.class);
+                    Intent intent = new Intent(activity.getApplicationContext(), TodoActivity.class);
                     startActivity(intent);
                 } else if (buttonName.equals("공부(업무) 타이머")) {
-                    Intent intent = new Intent(getActivity().getApplicationContext(), TimerActivity.class);
+                    Intent intent = new Intent(activity.getApplicationContext(), TimerActivity.class);
                     startActivity(intent);
                 }
             }
