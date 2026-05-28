@@ -22,7 +22,7 @@ import java.net.URL;
 
 public class FoodCalorieApi {
     // API key is injected at build time from local.properties.
-    // See README "보안 주의사항" for setup instructions.
+    // See README "시크릿 처리" for setup instructions.
     private static final String KEY = BuildConfig.FOOD_API_KEY;
 
     // Food Safety Korea OpenAPI endpoint fragments. The service id (I2790)
