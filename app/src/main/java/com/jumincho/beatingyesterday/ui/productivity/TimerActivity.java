@@ -87,6 +87,8 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
             case R.id.btn_stop:
                 timer.stop();
 
+                if (start_time == null) break;   // stop pressed before start — nothing to record
+
                 Calendar stop_cal = Calendar.getInstance();
                 Date stop_time = stop_cal.getTime();
 
