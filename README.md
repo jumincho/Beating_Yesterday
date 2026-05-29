@@ -8,6 +8,7 @@
 ![Platform](https://img.shields.io/badge/platform-Android-3DDC84?logo=android&logoColor=white)
 ![Language](https://img.shields.io/badge/language-Java-007396?logo=java&logoColor=white)
 ![Min SDK](https://img.shields.io/badge/minSdk-21-blue)
+[![Verify](https://github.com/jumincho/beating-yesterday/actions/workflows/verify.yml/badge.svg)](https://github.com/jumincho/beating-yesterday/actions/workflows/verify.yml)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Year](https://img.shields.io/badge/year-2021-blue)
 
@@ -60,6 +61,8 @@
 app/src/main/
 ├── java/com/jumincho/beatingyesterday/
 │   ├── MainActivity.java
+│   ├── domain/                        # 프레임워크 무관 순수 로직 (JVM 단위 테스트 대상)
+│   │   └── HealthMetrics.java         # BMI · 칼로리 점수 계산
 │   ├── data/                          # 데이터 계층
 │   │   ├── FoodCalorieApi.java        # 식품안전나라 API 클라이언트
 │   │   ├── Note.java                  # TODO 모델
@@ -166,6 +169,8 @@ Bottom navigation with three tabs:
 app/src/main/
 ├── java/com/jumincho/beatingyesterday/
 │   ├── MainActivity.java
+│   ├── domain/                        # framework-free pure logic (JVM unit-tested)
+│   │   └── HealthMetrics.java         # BMI / calorie scoring
 │   ├── data/                          # data layer
 │   │   ├── FoodCalorieApi.java        # Food Safety API client
 │   │   ├── Note.java                  # TODO model

@@ -2,7 +2,6 @@ package com.jumincho.beatingyesterday.ui.productivity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -119,13 +118,10 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onTimerStart(long timeStart) {
-        Log.e("pheynix", "onTimerStart " + timeStart);
     }
 
     @Override
     public void onTimeChange(long timeStart, long timeRemain) {
-        Log.e("pheynix", "onTimeChange timeStart " + timeStart);
-        Log.e("pheynix", "onTimeChange timeRemain " + timeRemain);
         if (timeRemain == 0) {
             Calendar finished_cal = Calendar.getInstance();
             Date finished_time = finished_cal.getTime();
@@ -151,23 +147,18 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onTimeStop(long timeStart, long timeRemain) {
-        Log.e("pheynix", "onTimeStop timeRemain " + timeStart);
-        Log.e("pheynix", "onTimeStop timeRemain " + timeRemain);
     }
 
     @Override
     public void onSecondChange(int second) {
-        Log.e("swifty", "second change to " + second);
     }
 
     @Override
     public void onHourChange(int hour) {
-        Log.e("swifty", "hour change to " + hour);
     }
 
     @Override
     public void onMinChange(int minute) {
-        Log.e("swifty", "minute change to " + minute);
     }
 
     public static long getInterval() {

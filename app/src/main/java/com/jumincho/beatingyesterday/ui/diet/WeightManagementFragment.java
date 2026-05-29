@@ -12,19 +12,12 @@ import androidx.fragment.app.Fragment;
 
 import com.jumincho.beatingyesterday.MainActivity;
 import com.jumincho.beatingyesterday.R;
+import com.jumincho.beatingyesterday.domain.HealthMetrics;
 import com.jumincho.beatingyesterday.ui.home.HomeViewModel;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class WeightManagementFragment extends Fragment {
-
-    // Daily reference calorie totals used when scoring the day. Sourced from
-    // the 2020 Korean Dietary Reference Intake (KDRI) energy requirements
-    // rounded for the original 2021 build — these are *not* a medical
-    // recommendation, just the baseline the scoring formula compares against.
-    private static final int STD_KCAL_MALE = 2700;
-    private static final int STD_KCAL_FEMALE = 2000;
-    private static final String GENDER_MALE = "남자";
 
     static int stdKcal;
     static int kcalScore;
@@ -65,24 +58,15 @@ public class WeightManagementFragment extends Fragment {
             }
         };
         btn1.setOnClickListener(listener);
-        if (GENDER_MALE.equals(HomeViewModel.gender)) {
-            stdKcal = STD_KCAL_MALE;
-        } else {
-            stdKcal = STD_KCAL_FEMALE;
-        }
+        stdKcal = HealthMetrics.standardKcal(HomeViewModel.gender);
+        kcalScore = HealthMetrics.calorieScore(HomeViewModel.bmiLevel, DietViewModel.total, stdKcal);
 
-        if (HomeViewModel.bmiLevel == HomeViewModel.BMI_LEVEL_UNDERWEIGHT) {
+        if (HomeViewModel.bmiLevel == HealthMetrics.LEVEL_UNDERWEIGHT) {
             tv1.setText("당신의 체중은 저체중입니다.\n");
-            kcalScore = DietViewModel.total - stdKcal;
-        } else if (HomeViewModel.bmiLevel == HomeViewModel.BMI_LEVEL_NORMAL) {
+        } else if (HomeViewModel.bmiLevel == HealthMetrics.LEVEL_NORMAL) {
             tv1.setText("당신의 체중은 정상체중입니다.\n");
-            kcalScore = stdKcal - DietViewModel.total;
-            if (kcalScore >= 0) {
-                kcalScore = -kcalScore;
-            }
         } else {
             tv1.setText("당신의 체중은 과체중입니다.\n");
-            kcalScore = stdKcal - DietViewModel.total;
         }
         if (getActivity() != null) {
             SharedPreferences sf = getActivity().getSharedPreferences("Today_kcalScore", MODE_PRIVATE);

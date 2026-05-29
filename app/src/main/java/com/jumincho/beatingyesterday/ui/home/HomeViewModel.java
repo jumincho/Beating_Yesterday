@@ -8,21 +8,10 @@ import androidx.lifecycle.ViewModel;
 
 import com.jumincho.beatingyesterday.MainActivity;
 import com.jumincho.beatingyesterday.R;
+import com.jumincho.beatingyesterday.domain.HealthMetrics;
 
 public class HomeViewModel extends ViewModel {
 
-    // BMI bucket thresholds. The Korean health-service guideline used for the
-    // original 2021 app treats BMI < 20 as underweight, 20–25 as normal, and
-    // >= 25 as overweight; WeightManagementFragment dispatches on the level
-    // codes below.
-    public static final float BMI_NORMAL_LOWER = 20f;
-    public static final float BMI_NORMAL_UPPER = 25f;
-
-    public static final int BMI_LEVEL_UNDERWEIGHT = 1;
-    public static final int BMI_LEVEL_NORMAL = 2;
-    public static final int BMI_LEVEL_OVERWEIGHT = 3;
-
-    private static int questionFlag;
     public static String name;
     public static String gender;
     public static int age;
@@ -31,19 +20,17 @@ public class HomeViewModel extends ViewModel {
     public static float BMI;
     public static int bmiLevel;
     public static int yesterKcalScore;
-    public static int todayKcalSCore;
+    public static int todayKcalScore;
     public static long yesterdayInterval;
     public static long todayInterval;
 
     public void setData() {
-        questionFlag = MainActivity.questionFlag;
         name = MainActivity.name;
         gender = MainActivity.gender;
         age = MainActivity.age;
         height = MainActivity.height;
         weight = MainActivity.weight;
-        BMI = (weight / (height / 100) / (height / 100));
-        BMI = (float) (Math.round(BMI * 100) / 100.0);
+        BMI = HealthMetrics.bmi(weight, height);
         setBmiLevel();
     }
 
@@ -63,12 +50,6 @@ public class HomeViewModel extends ViewModel {
     }
 
     public void setBmiLevel() {
-        if (BMI < BMI_NORMAL_LOWER) {
-            bmiLevel = BMI_LEVEL_UNDERWEIGHT;
-        } else if (BMI < BMI_NORMAL_UPPER) {
-            bmiLevel = BMI_LEVEL_NORMAL;
-        } else {
-            bmiLevel = BMI_LEVEL_OVERWEIGHT;
-        }
+        bmiLevel = HealthMetrics.bmiLevel(BMI);
     }
 }

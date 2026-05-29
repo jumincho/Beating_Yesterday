@@ -7,6 +7,7 @@
 ![Platform](https://img.shields.io/badge/platform-Android-3DDC84?logo=android&logoColor=white)
 ![Language](https://img.shields.io/badge/language-Java-007396?logo=java&logoColor=white)
 ![Min SDK](https://img.shields.io/badge/minSdk-21-blue)
+[![Verify](https://github.com/jumincho/beating-yesterday/actions/workflows/verify.yml/badge.svg)](https://github.com/jumincho/beating-yesterday/actions/workflows/verify.yml)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Year](https://img.shields.io/badge/year-2021-blue)
 
@@ -59,6 +60,8 @@
 app/src/main/
 ├── java/com/jumincho/beatingyesterday/
 │   ├── MainActivity.java
+│   ├── domain/                        # 与框架无关的纯逻辑(JVM 单元测试覆盖)
+│   │   └── HealthMetrics.java         # BMI · 热量得分计算
 │   ├── data/                          # 数据层
 │   │   ├── FoodCalorieApi.java        # 식품안전나라 OpenAPI 客户端
 │   │   ├── Note.java                  # TODO 模型

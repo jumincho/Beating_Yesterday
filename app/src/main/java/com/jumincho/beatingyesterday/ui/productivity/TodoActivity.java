@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment;
 
 import android.content.ContentValues;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,7 +15,6 @@ import com.jumincho.beatingyesterday.R;
 import com.jumincho.beatingyesterday.data.NoteDatabase;
 
 public class TodoActivity extends AppCompatActivity {
-    private static final String TAG = "TodoActivity";
 
     Fragment todoListFragment;
     EditText inputToDo;
@@ -66,12 +64,7 @@ public class TodoActivity extends AppCompatActivity {
         }
 
         noteDatabase = NoteDatabase.getInstance(this);
-        boolean isOpen = noteDatabase.open();
-        if (isOpen) {
-            Log.d(TAG, "Note database is open.");
-        } else {
-            Log.d(TAG, "Note database is not open.");
-        }
+        noteDatabase.open();
     }
 
     @Override

@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.jumincho.beatingyesterday.MainActivity;
 import com.jumincho.beatingyesterday.R;
+import com.jumincho.beatingyesterday.domain.HealthMetrics;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -48,8 +49,8 @@ public class HomeFragment extends Fragment {
         TextView tv2_y = (TextView) root.findViewById(R.id.studyTimeTextView);
         tv2_y.append(tmp1 + "초");
         SharedPreferences sf1 = getActivity().getSharedPreferences("Today_kcalScore", Context.MODE_PRIVATE);
-        HomeViewModel.todayKcalSCore = sf1.getInt("Kcal", 0);
-        tmp = HomeViewModel.todayKcalSCore;
+        HomeViewModel.todayKcalScore = sf1.getInt("Kcal", 0);
+        tmp = HomeViewModel.todayKcalScore;
         TextView tv1 = (TextView) root.findViewById(R.id.today_KcalTextView);
         tv1.append(tmp + "");
         SharedPreferences sf3 = getActivity().getSharedPreferences("today_interval", Context.MODE_PRIVATE);
@@ -152,8 +153,7 @@ public class HomeFragment extends Fragment {
         } catch (NumberFormatException ignored) {
         }
         if (HomeViewModel.height > 0) {
-            HomeViewModel.BMI = (HomeViewModel.weight / (HomeViewModel.height / 100) / (HomeViewModel.height / 100));
-            HomeViewModel.BMI = (float) (Math.round(HomeViewModel.BMI * 100) / 100.0);
+            HomeViewModel.BMI = HealthMetrics.bmi(HomeViewModel.weight, HomeViewModel.height);
         }
 
         SharedPreferences sf = getActivity().getSharedPreferences("UserData", Context.MODE_PRIVATE);

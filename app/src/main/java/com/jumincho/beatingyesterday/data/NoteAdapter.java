@@ -17,8 +17,6 @@ import com.jumincho.beatingyesterday.R;
 import java.util.ArrayList;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
-    private static final String TAG = "NoteAdapter";
-
     ArrayList<Note> items = new ArrayList<>();
     private final Context context;
 
