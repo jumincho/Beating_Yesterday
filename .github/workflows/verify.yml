@@ -39,6 +39,9 @@ jobs:
   build:
     name: Build & Unit Test
     runs-on: ubuntu-latest
+    env:
+      ANDROID_SDK_ROOT: ${{ github.workspace }}/.android-sdk
+      ANDROID_HOME: ${{ github.workspace }}/.android-sdk
     steps:
       - uses: actions/checkout@v4
 
@@ -48,10 +51,22 @@ jobs:
         with:
           distribution: temurin
           java-version: "11"
-          cache: gradle
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      # Install the Android SDK by hand rather than via a third-party action,
+      # so the workflow stays within an "actions created by GitHub only" policy.
+      # cmdline-tools 9477386 is the last line that runs on JDK 11.
+      - name: Install Android SDK
+        run: |
+          set -eux
+          tools="$ANDROID_SDK_ROOT/cmdline-tools"
+          mkdir -p "$tools"
+          curl -fsSL -o /tmp/cmdline-tools.zip \
+            https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          unzip -q /tmp/cmdline-tools.zip -d "$tools"
+          mv "$tools/cmdline-tools" "$tools/latest"
+          yes | "$tools/latest/bin/sdkmanager" --licenses >/dev/null
+          "$tools/latest/bin/sdkmanager" \
+            "platform-tools" "platforms;android-32" "build-tools;32.0.0"
 
       # assembleDebug compiles and packages the app; testDebugUnitTest runs the
       # JVM unit tests (e.g. HealthMetricsTest). A throwaway key satisfies the
