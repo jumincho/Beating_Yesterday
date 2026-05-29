@@ -9,7 +9,6 @@ import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -103,7 +102,6 @@ public class CircularTimerView extends View {
     private TimerMode mode = TimerMode.Timer;
 
     private void initialize(Canvas canvas) {
-        Log.e("aa", "init");
         timeRemain = Calendar.getInstance();
         timeStart = Calendar.getInstance();
         timeStart.clear();
