@@ -549,7 +549,9 @@ public class CircularTimerView extends View {
     }
 
     public long stop() {
-        timerTask.cancel();
+        if (timerTask != null) {
+            timerTask.cancel();   // reset() calls stop() before start(); timerTask is null until start()
+        }
         isStarted = false;
 
         if (timeChangeListener != null) {
